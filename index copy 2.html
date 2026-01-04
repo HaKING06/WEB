@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HaKING06 | Cyber Command</title>
+    
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=general-sans@400,500,600&f[]=jetbrains-mono@400&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23c084fc;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%236366f1;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M10 40 L30 70 L50 30 L70 70 L90 40 L85 85 H15 Z' fill='url(%23grad)' stroke='white' stroke-width='2'/%3E%3Ccircle cx='50' cy='20' r='4' fill='white' filter='drop-shadow(0 0 5px white)'/%3E%3C/svg%3E">
+
+    <style>
+        /* -----------------------------------------------------------
+           1. CORE SYSTEM & VARIABLES
+        ----------------------------------------------------------- */
+        :root {
+            --bg-void: #050507;
+            
+            /* Modern Neon Palet (Daha Sofistike) */
+            --primary: #7c3aed; /* Derin Mor */
+            --secondary: #2563eb; /* Royal Blue */
+            --accent: #00f0ff; /* Cyber Cyan */
+            --success: #00ff9d; /* Matrix Green */
+            
+            --glass-surface: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            
+            --font-display: 'Clash Display', sans-serif;
+            --font-body: 'General Sans', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; /* Sistem imlecini gizle */ }
+
+        body {
+            background-color: var(--bg-void);
+            color: #fff;
+            font-family: var(--font-body);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* NOISE DOKUSU (SİNEMATİK EFEKT) */
+        body::before {
+            content: ""; position: fixed; inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999;
+        }
+
+        /* -----------------------------------------------------------
+           2. UI LAYERS (CURSOR, LOADER, PORTAL)
+        ----------------------------------------------------------- */
+        
+        /* ÖZEL İMLEÇ (Mouse Takip Eden Keskin Ok) */
+        #custom-cursor {
+            position: fixed; top: 0; left: 0; z-index: 10000; pointer-events: none;
+            mix-blend-mode: exclusion;
+        }
+        .cursor-arrow {
+            width: 20px; fill: var(--accent);
+            filter: drop-shadow(0 0 8px var(--accent));
+            transition: transform 0.1s ease;
+        }
+        /* Tıklama Dalgası */
+        .click-wave {
+            position: fixed; border-radius: 50%;
+            border: 1px solid var(--accent);
+            background: rgba(0, 240, 255, 0.1);
+            transform: translate(-50%, -50%) scale(0);
+            pointer-events: none; z-index: 9998;
+        }
+        .wave-anim { animation: waveBlast 0.5s ease-out forwards; }
+        @keyframes waveBlast { to { transform: translate(-50%, -50%) scale(3); opacity: 0; } }
+
+        /* LOADER EKRANI */
+        #loader-screen {
+            position: fixed; inset: 0; background: #000; z-index: 11000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease;
+        }
+        .loader-text {
+            font-family: var(--font-code); color: var(--success); font-size: 0.9rem; letter-spacing: 3px;
+            border-right: 2px solid var(--success);
+            white-space: nowrap; overflow: hidden;
+            animation: typing 2s steps(20), blinkCursor 0.5s step-end infinite alternate;
+        }
+
+        /* PORTAL GEÇİŞ EKRANI */
+        #portal-screen {
+            position: fixed; inset: 0; background: rgba(5, 5, 10, 0.95); backdrop-filter: blur(40px);
+            z-index: 10500; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+        }
+        #portal-screen.active { opacity: 1; pointer-events: all; }
+        
+        .portal-status { font-family: var(--font-code); color: var(--accent); margin-bottom: 15px; font-size: 0.8rem; }
+        .portal-target { font-family: var(--font-display); font-size: 3rem; color: #fff; text-shadow: 0 0 30px var(--primary); margin-bottom: 30px; }
+        .portal-progress-bg { width: 300px; height: 2px; background: rgba(255,255,255,0.1); }
+        .portal-progress-fill { height: 100%; width: 0%; background: var(--success); box-shadow: 0 0 20px var(--success); transition: width 1s ease-in-out; }
+
+        /* -----------------------------------------------------------
+           3. BACKGROUND VISUALS
+        ----------------------------------------------------------- */
+        .ambient-light {
+            position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; z-index: -2; overflow: hidden;
+        }
+        .light-blob {
+            position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.25;
+            animation: breathe 10s infinite alternate;
+        }
+        .lb-1 { width: 600px; height: 600px; background: var(--primary); top: -200px; left: -100px; }
+        .lb-2 { width: 500px; height: 500px; background: var(--secondary); bottom: -100px; right: -100px; animation-delay: -5s; }
+
+        /* Yıldızlar Canvas */
+        #star-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.6; }
+
+        /* -----------------------------------------------------------
+           4. HEADER
+        ----------------------------------------------------------- */
+        header {
+            padding: 100px 20px 60px; text-align: center; display: flex; flex-direction: column; align-items: center; z-index: 10;
+        }
+
+        /* Logo Link */
+        .logo-btn { display: block; cursor: none; transition: transform 0.4s var(--transition-bounce); }
+        .logo-btn:hover { transform: scale(1.1) rotate(5deg); }
+
+        .logo-svg { width: 120px; height: 120px; filter: drop-shadow(0 0 30px rgba(124, 58, 237, 0.5)); }
+
+        h1 {
+            font-family: var(--font-display); font-size: 5rem; font-weight: 700;
+            letter-spacing: -2px; color: #fff; margin: 20px 0 10px;
+            background: linear-gradient(to bottom, #fff, #a5a5a5);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            pointer-events: none;
+        }
+        .subtitle {
+            font-family: var(--font-body); color: var(--text-mute); font-size: 1.1rem;
+            background: rgba(255,255,255,0.03); padding: 10px 24px; border-radius: 100px;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* -----------------------------------------------------------
+           5. MODERN GRID & SPOTLIGHT CARDS
+        ----------------------------------------------------------- */
+        .grid-container {
+            width: 100%; max-width: 1400px; padding: 20px 40px 100px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 30px; position: relative; z-index: 5;
+        }
+
+        /* KART TASARIMI (SPOTLIGHT EFFECT) */
+        .card {
+            background-color: rgba(20, 20, 25, 0.6);
+            border-radius: var(--card-radius);
+            position: relative;
+            cursor: none; /* Custom imleç için */
+            display: flex; flex-direction: column;
+            min-height: 340px;
+            /* Spotlight için değişkenler */
+            --mouse-x: 0px;
+            --mouse-y: 0px;
+            border: 1px solid rgba(255,255,255,0.05); /* Varsayılan çok silik çerçeve */
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* SPOTLIGHT KENARLIK (Mouse ile gezince parlar) */
+        .card::before {
+            content: "";
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: var(--card-radius);
+            background: radial-gradient(
+                800px circle at var(--mouse-x) var(--mouse-y),
+                rgba(255, 255, 255, 0.15),
+                transparent 40%
+            );
+            z-index: 3; pointer-events: none; opacity: 0; transition: opacity 0.5s;
+        }
+
+        /* SPOTLIGHT İÇ AYDINLATMA */
+        .card::after {
+            content: "";
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: var(--card-radius);
+            background: radial-gradient(
+                600px circle at var(--mouse-x) var(--mouse-y),
+                rgba(124, 58, 237, 0.1),
+                transparent 40%
+            );
+            z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.5s;
+        }
+
+        /* Hover Effect */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+        }
+        .card:hover::before, .card:hover::after { opacity: 1; }
+
+        /* KART İÇERİĞİ */
+        .card-content {
+            padding: 35px; height: 100%; display: flex; flex-direction: column;
+            z-index: 2; position: relative;
+        }
+
+        .project-title {
+            font-family: var(--font-display); font-size: 2rem; color: #fff;
+            margin-bottom: 10px; line-height: 1.1;
+        }
+        
+        .project-desc {
+            font-family: var(--font-body); color: var(--text-mute); font-size: 1rem;
+            line-height: 1.6; margin-bottom: 20px; flex-grow: 1;
+        }
+
+        .card-footer {
+            margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .status {
+            font-family: var(--font-code); font-size: 0.75rem; color: var(--success);
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(0, 255, 157, 0.05); padding: 6px 12px; border-radius: 6px;
+        }
+        .status-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; box-shadow: 0 0 8px var(--success); }
+
+        .view-btn {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center; color: #fff;
+            transition: 0.3s;
+        }
+        .card:hover .view-btn { background: #fff; color: #000; transform: rotate(-45deg); }
+
+        /* -----------------------------------------------------------
+           6. FOOTER
+        ----------------------------------------------------------- */
+        footer {
+            margin-top: auto; padding: 60px; text-align: center; color: #555;
+            font-family: var(--font-code); font-size: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.05); width: 100%;
+        }
+
+        /* -----------------------------------------------------------
+           7. ANIMATIONS
+        ----------------------------------------------------------- */
+        @keyframes breathe { 0% { opacity: 0.2; transform: scale(1); } 100% { opacity: 0.4; transform: scale(1.1); } }
+        @keyframes typing { from { width: 0; } to { width: 100%; } }
+        @keyframes blinkCursor { 50% { border-color: transparent; } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* -----------------------------------------------------------
+           8. MOBILE OPTIMIZATION
+        ----------------------------------------------------------- */
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            .grid-container { grid-template-columns: 1fr; padding: 20px; }
+            #custom-cursor { display: none; } /* Mobilde özel imleç yok */
+            body, .card, .logo-btn { cursor: auto !important; }
+            .card::before, .card::after { display: none; } /* Mobilde spotlight performans düşürür, kapat */
+            .card { border: 1px solid rgba(255,255,255,0.1); } /* Basit border */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="custom-cursor">
+        <svg class="cursor-arrow" viewBox="0 0 24 24"><path d="M2 2L11 20L15 13L22 10L2 2Z"/></svg>
+    </div>
+
+    <div id="loader-screen">
+        <div class="loader-text">SİSTEM BAŞLATILIYOR...</div>
+    </div>
+
+    <div id="portal-screen">
+        <div class="portal-status">BAĞLANTI OLUŞTURULUYOR</div>
+        <div class="portal-target" id="target-name"></div>
+        <div class="portal-progress-bg"><div class="portal-progress-fill" id="portal-fill"></div></div>
+    </div>
+
+    <div class="ambient-light">
+        <div class="light-blob lb-1"></div>
+        <div class="light-blob lb-2"></div>
+    </div>
+    <canvas id="star-canvas"></canvas>
+
+    <header>
+        <a href="https://github.com/HaKING06" target="_blank" class="logo-btn">
+            <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#00f0ff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <path d="M15 40 L35 70 L50 35 L65 70 L85 40 L80 85 H20 Z" fill="url(#logoGrad)" stroke="white" stroke-width="2"/>
+                <circle cx="50" cy="20" r="5" fill="#fff" filter="drop-shadow(0 0 10px #fff)"/>
+            </svg>
+        </a>
+        <h1>HaKING06</h1>
+        <div class="subtitle">Digital Portfolio</div>
+    </header>
+
+    <main class="grid-container" id="repo-grid">
+        </main>
+
+    <footer>
+        Developed by <span style="color:#fff; font-weight:bold;">halitguns06.dev</span>
+    </footer>
+
+    <script>
+        // --- 1. CURSOR LOGIC ---
+        const cursor = document.getElementById('custom-cursor');
+        const arrow = document.querySelector('.cursor-arrow');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        });
+
+        // Click Ripple Effect
+        document.addEventListener('mousedown', (e) => {
+            const ripple = document.createElement('div');
+            ripple.className = 'click-wave wave-anim';
+            ripple.style.left = `${e.clientX}px`;
+            ripple.style.top = `${e.clientY}px`;
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+
+        // Hover Detection
+        document.addEventListener('mouseover', (e) => {
+            if (e.target.closest('a, .card, .logo-btn')) {
+                arrow.style.transform = 'scale(1.3) rotate(-10deg)';
+                arrow.style.fill = 'var(--primary)';
+            } else {
+                arrow.style.transform = 'scale(1) rotate(0deg)';
+                arrow.style.fill = 'var(--accent)';
+            }
+        });
+
+        // --- 2. STARFIELD CANVAS ---
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Star {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5;
+                this.speed = Math.random() * 0.5;
+                this.alpha = Math.random();
+            }
+            update() {
+                this.y -= this.speed; // Yukarı doğru hareket
+                if (this.y < 0) this.y = canvas.height;
+                this.alpha = Math.abs(Math.sin(Date.now() * 0.001 * this.speed)); // Yanıp sönme
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for(let i=0; i<100; i++) stars.push(new Star());
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => { s.update(); s.draw(); });
+            requestAnimationFrame(animateStars);
+        }
+        animateStars();
+
+        // --- 3. GITHUB & CARD LOGIC ---
+        const user = 'HaKING06';
+        const grid = document.getElementById('repo-grid');
+        const loader = document.getElementById('loader-screen');
+
+        // Portal Trigger
+        function activatePortal(url, name) {
+            const portal = document.getElementById('portal-screen');
+            const target = document.getElementById('target-name');
+            const bar = document.getElementById('portal-fill');
+
+            target.innerText = name;
+            portal.classList.add('active');
+            
+            setTimeout(() => bar.style.width = "100%", 100);
+            
+            setTimeout(() => {
+                window.open(url, '_blank');
+                setTimeout(() => {
+                    portal.classList.remove('active');
+                    bar.style.width = "0%";
+                }, 500);
+            }, 1200);
+        }
+
+        // Spotlight Card Effect Logic
+        function updateSpotlight(e) {
+            const cards = document.getElementsByClassName('card');
+            for (const card of cards) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            }
+        }
+        document.addEventListener('mousemove', updateSpotlight);
+
+        async function loadProjects() {
+            try {
+                const res = await fetch(`https://api.github.com/users/${user}/repos?sort=pushed&direction=desc`);
+                const repos = await res.json();
+
+                // Hide Loader
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 800);
+
+                grid.innerHTML = '';
+                const sites = repos.filter(r => r.has_pages);
+
+                // DEMO MODE (Eğer site yoksa boş kalmasın diye)
+                let displayData = sites;
+                if(sites.length === 0) {
+                    displayData = [
+                        {name: "Project Alpha", description: "Gizli siber güvenlik projesi.", homepage:"#"},
+                        {name: "Neon Nexus", description: "Yeni nesil arayüz tasarımı.", homepage:"#"},
+                    ];
+                }
+
+                displayData.forEach((repo, i) => {
+                    const url = repo.homepage || `https://${user}.github.io/${repo.name}`;
+                    const desc = repo.description || "Gelişmiş web teknolojileri ile üretildi.";
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.style.animation = `fadeUp 0.6s ease forwards ${i * 0.1}s`;
+                    card.style.opacity = '0';
+
+                    card.innerHTML = `
+                        <div class="card-content">
+                            <div>
+                                <h2 class="project-title">${repo.name}</h2>
+                                <p class="project-desc">${desc}</p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="status">
+                                    <div class="status-dot"></div> ONLINE
+                                </div>
+                                <div class="view-btn">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    card.addEventListener('click', () => activatePortal(url, repo.name));
+                    grid.appendChild(card);
+                });
+
+            } catch(e) { console.error(e); }
+        }
+
+        // CSS Keyframe Injection
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        `;
+        document.head.appendChild(styleSheet);
+
+        loadProjects();
+    </script>
+</body>
+</html>
