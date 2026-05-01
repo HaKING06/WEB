@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HaKING06 | Executive Portfolio</title>
+    <meta name="description" content="Kullanıcı odaklı, yüksek performanslı web uygulamaları ve dijital mimariler geliştiren profesyonel portfolyo.">
+    
+    <!-- Modern, keskin ve okunaklı fontlar -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=plus-jakarta-sans@400,500,700&f[]=jetbrains-mono@400,700&display=swap" rel="stylesheet">
+
+    <!-- Kırmızı-Siyah Konseptli "H" Monogram Logo -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23991b1b;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23450a0a;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M10 40 L30 70 L50 30 L70 70 L90 40 L85 85 H15 Z' fill='url(%23grad)' stroke='white' stroke-width='2'/%3E%3Ccircle cx='50' cy='20' r='4' fill='white' filter='drop-shadow(0 0 5px white)'/%3E%3C/svg%3E">
+
+    <style>
+        /* ==========================================================================
+           1. CORE SYSTEM & VARIABLES (DARK RED & BLACK THEME)
+           ========================================================================== */
+        :root {
+            /* Saf Karanlık ve Gri Tonlar */
+            --bg-deep: #050505;
+            --bg-surface: #0a0a0a;
+            --bg-card: rgba(15, 15, 15, 0.85);
+            --bg-glass: rgba(10, 10, 10, 0.7);
+            
+            /* Executive Kırmızı ve Beyaz/Gri Aksanlar */
+            --primary-glow: #991b1b; /* Koyu Kan Kırmızısı */
+            --secondary-glow: #dc2626; /* Canlı Kırmızı */
+            --accent-white: #ffffff;
+            --accent-silver: #e2e8f0;
+            --alert-color: #ef4444;
+            
+            --text-main: #ffffff;
+            --text-mute: #a1a1aa;
+            --text-dark: #52525b;
+            
+            --font-head: 'Clash Display', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            --z-back: -10;
+            --z-normal: 1;
+            --z-ui: 100;
+            --z-modal: 1000;
+            --z-cursor: 9999;
+            --z-loader: 10000;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; cursor: none; }
+
+        /* Kaydırma Çubuğu */
+        ::-webkit-scrollbar { width: 6px; background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(var(--primary-glow), var(--secondary-glow)); border-radius: 10px; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* CRT SCANLINE DOKUSU */
+        body::after {
+            content: ""; position: fixed; inset: 0; z-index: 9000; pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px; opacity: 0.15;
+        }
+
+        /* -----------------------------------------------------------
+           2. ÖZEL İMLEÇ VE ETKİLEŞİM
+        ----------------------------------------------------------- */
+        #cursor-custom {
+            position: fixed; top: 0; left: 0; z-index: var(--z-cursor); pointer-events: none;
+            mix-blend-mode: difference; transition: transform 0.1s ease-out;
+        }
+        .cursor-arrow {
+            width: 24px; height: 24px; fill: var(--accent-white);
+            filter: drop-shadow(0 0 5px var(--accent-white));
+            transform-origin: top left; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        body.hovering .cursor-arrow {
+            fill: var(--secondary-glow);
+            transform: scale(1.3) rotate(-10deg);
+        }
+
+        .click-ripple {
+            position: fixed; border-radius: 50%; border: 2px solid var(--secondary-glow);
+            background: rgba(220, 38, 38, 0.1); transform: translate(-50%, -50%) scale(0);
+            pointer-events: none; z-index: var(--z-cursor);
+        }
+        .anim-ripple { animation: rippleEffect 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes rippleEffect { 
+            0% { width: 0; height: 0; opacity: 1; border-width: 4px; } 
+            100% { width: 200px; height: 200px; opacity: 0; border-width: 0px; } 
+        }
+
+        /* -----------------------------------------------------------
+           3. YÜKLEYİCİ VE GEÇİŞ EKRANLARI
+        ----------------------------------------------------------- */
+        #loader-screen {
+            position: fixed; inset: 0; background: #000; z-index: var(--z-loader);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        .loader-glitch { font-family: var(--font-head); font-size: 3rem; color: #fff; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 5px; animation: textFlicker 3s infinite; }
+        .loader-text { font-family: var(--font-mono); color: var(--secondary-glow); letter-spacing: 2px; font-size: 0.9rem; }
+        .sys-progress { width: 300px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 20px; position: relative; overflow: hidden; }
+        .sys-progress-bar { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--secondary-glow); box-shadow: 0 0 15px var(--secondary-glow); }
+
+        #portal-screen {
+            position: fixed; inset: 0; background: rgba(5, 0, 0, 0.98); backdrop-filter: blur(20px);
+            z-index: 9500; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
+        #portal-screen.active { opacity: 1; pointer-events: all; }
+        .target-text { font-family: var(--font-head); font-size: 3rem; color: #fff; margin-bottom: 20px; text-shadow: 0 0 30px var(--primary-glow); text-transform: uppercase; letter-spacing: 2px;}
+        .portal-bar-wrap { width: 300px; height: 2px; background: rgba(255,255,255,0.1); overflow: hidden; }
+        .portal-bar-fill { width: 0%; height: 100%; background: var(--secondary-glow); box-shadow: 0 0 15px var(--secondary-glow); transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+
+        /* -----------------------------------------------------------
+           4. ARKA PLAN VE CANVAS EFEKTLERİ
+        ----------------------------------------------------------- */
+        .ambient-glow { position: fixed; inset: 0; z-index: var(--z-back); overflow: hidden; pointer-events: none; }
+        .glow-orb { position: absolute; border-radius: 50%; filter: blur(150px); opacity: 0.25; animation: breathe 15s infinite alternate; }
+        .go-1 { width: 60vw; height: 60vw; background: #3f0000; top: -20%; left: -20%; }
+        .go-2 { width: 50vw; height: 50vw; background: #1a0000; bottom: -20%; right: -20%; animation-delay: -5s; }
+
+        #network-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -5; pointer-events: none; opacity: 0.5; }
+
+        /* -----------------------------------------------------------
+           5. NAVİGASYON VE CUSTOM CONTEXT MENU
+        ----------------------------------------------------------- */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 20px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: var(--z-ui); mix-blend-mode: difference;
+        }
+        .nav-logo-text { font-family: var(--font-head); font-size: 1.5rem; font-weight: 700; color: #fff; text-decoration: none; letter-spacing: 2px; }
+        .ai-btn {
+            font-family: var(--font-mono); font-size: 0.85rem; color: #fff; background: transparent;
+            border: 1px solid var(--border-light); padding: 8px 16px; border-radius: 4px; transition: 0.3s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .ai-btn:hover { background: #fff; color: #000; box-shadow: 0 0 15px rgba(255,255,255,0.5); }
+        .ai-dot { width: 8px; height: 8px; background: var(--secondary-glow); border-radius: 50%; animation: blink 1.5s infinite; }
+
+        #context-menu {
+            position: fixed; background: rgba(10, 10, 10, 0.95); border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px); width: 220px; padding: 10px 0; border-radius: 8px;
+            z-index: var(--z-modal); transform: scale(0.9); opacity: 0; pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s; box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+        }
+        #context-menu.active { opacity: 1; transform: scale(1); pointer-events: all; }
+        .ctx-item {
+            padding: 10px 20px; font-family: var(--font-body); font-size: 0.9rem; color: var(--text-main);
+            display: flex; align-items: center; gap: 10px; transition: 0.2s;
+        }
+        .ctx-item:hover { background: rgba(220, 38, 38, 0.1); color: var(--secondary-glow); padding-left: 25px; }
+
+        /* -----------------------------------------------------------
+           6. İNTERAKTİF YAPAY ZEKA SOHBET ARAYÜZÜ (GEMINI AI)
+        ----------------------------------------------------------- */
+        #ai-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            z-index: var(--z-modal); display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        #ai-overlay.active { opacity: 1; pointer-events: all; }
+        .ai-window {
+            width: 90%; max-width: 800px; height: 75vh; background: #050505;
+            border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 12px; display: flex; flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 30px rgba(220, 38, 38, 0.15);
+            transform: translateY(20px); transition: 0.4s; overflow: hidden;
+        }
+        #ai-overlay.active .ai-window { transform: translateY(0); }
+        .ai-header {
+            padding: 15px 20px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;
+            font-family: var(--font-head); font-size: 1rem; color: #fff; background: #0a0a0a;
+        }
+        .ai-header-title { display: flex; align-items: center; gap: 10px; }
+        .ai-close { color: var(--text-mute); transition: 0.2s; font-size: 1.2rem; }
+        .ai-close:hover { color: var(--alert-color); }
+        .ai-body { flex-grow: 1; padding: 20px; font-family: var(--font-body); font-size: 0.95rem; color: var(--text-main); overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        
+        .chat-msg { max-width: 80%; padding: 12px 16px; border-radius: 8px; line-height: 1.5; }
+        .chat-ai { background: rgba(220, 38, 38, 0.1); border: 1px solid rgba(220, 38, 38, 0.2); align-self: flex-start; border-bottom-left-radius: 0; }
+        .chat-user { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); align-self: flex-end; border-bottom-right-radius: 0; }
+        
+        .ai-input-area { padding: 15px 20px; border-top: 1px solid var(--border-light); background: #0a0a0a; display: flex; gap: 15px; }
+        .ai-input { flex-grow: 1; background: transparent; border: none; color: var(--text-main); font-family: var(--font-body); font-size: 1rem; outline: none; }
+        .ai-send-btn { background: var(--secondary-glow); color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-family: var(--font-mono); font-size: 0.85rem; transition: 0.3s; }
+        .ai-send-btn:hover { background: #fff; color: #000; }
+        
+        .typing-indicator { display: flex; gap: 5px; padding: 10px 15px; align-self: flex-start; }
+        .typing-dot { width: 6px; height: 6px; background: var(--secondary-glow); border-radius: 50%; animation: typingAnim 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typingAnim { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        /* -----------------------------------------------------------
+           7. SECTIONS & LAYOUT
+        ----------------------------------------------------------- */
+        section { width: 100%; max-width: 1300px; padding: 100px 20px; position: relative; z-index: var(--z-normal); }
+        
+        /* HERO */
+        .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .logo-wrapper { width: 140px; height: 140px; margin-bottom: 30px; filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.4)); animation: floatLogo 6s ease-in-out infinite; }
+        h1 { font-family: var(--font-head); font-size: clamp(3rem, 8vw, 6rem); font-weight: 700; letter-spacing: 2px; color: #fff; margin-bottom: 15px; line-height: 1.1; pointer-events: none; }
+        h1.decoding { font-family: var(--font-mono); color: var(--secondary-glow); }
+        .subtitle { font-size: 1.2rem; color: var(--text-mute); background: rgba(255,255,255,0.03); padding: 12px 32px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+
+        /* ABOUT & GITHUB STATS */
+        .section-title { font-family: var(--font-head); font-size: 2.5rem; color: #fff; margin-bottom: 40px; border-left: 4px solid var(--secondary-glow); padding-left: 15px; }
+        
+        .glass-panel {
+            background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 20px;
+            padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden;
+            max-width: 900px; margin: 0 auto;
+        }
+        .glass-panel::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%); pointer-events: none;
+        }
+        .profile-header { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; }
+        .avatar { width: 90px; height: 90px; border-radius: 50%; border: 2px solid var(--secondary-glow); object-fit: cover; }
+        .gh-name { font-family: var(--font-head); font-size: 1.8rem; color: #fff; }
+        .gh-bio { font-size: 1.05rem; color: var(--text-mute); line-height: 1.7; margin-bottom: 30px; }
+        .stats-row { display: flex; gap: 20px; flex-wrap: wrap; }
+        .stat-box { flex: 1; min-width: 120px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; text-align: center; }
+        .stat-num { font-family: var(--font-mono); font-size: 1.8rem; color: var(--accent-white); font-weight: 700; margin-bottom: 5px; }
+        .stat-label { font-size: 0.85rem; color: var(--text-mute); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* PROJECTS (THE GRID) */
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 40px; }
+        .glass-card {
+            position: relative; background: var(--bg-card); border-radius: 20px; padding: 2px; overflow: hidden;
+            transition: transform 0.1s ease, box-shadow 0.3s ease; transform-style: preserve-3d; perspective: 1000px;
+            display: flex; flex-direction: column; min-height: 300px; box-shadow: 0 15px 40px -15px rgba(0,0,0,0.8);
+        }
+        .glass-card::before {
+            content: ""; position: absolute; inset: 0; border-radius: 20px; padding: 2px;
+            background: linear-gradient(135deg, #1a1a1a, var(--primary-glow), var(--accent-silver), #1a1a1a);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude; pointer-events: none; opacity: 0.3; transition: 0.4s;
+        }
+        .glass-card:hover { box-shadow: 0 30px 60px -20px rgba(153, 27, 27, 0.6); z-index: 10; }
+        .glass-card:hover::before { opacity: 1; filter: brightness(1.2); }
+        
+        .card-inner {
+            background: rgba(10, 10, 12, 0.95); border-radius: 18px; height: 100%; width: 100%; 
+            padding: 35px; display: flex; flex-direction: column; justify-content: space-between; z-index: 2;
+            transform: translateZ(30px); /* 3D effect depth */
+        }
+        .project-name { font-family: var(--font-head); font-size: 1.8rem; color: #fff; margin-bottom: 12px; transition: 0.3s; }
+        .glass-card:hover .project-name { text-shadow: 0 0 15px rgba(255,255,255,0.5), 0 0 30px var(--secondary-glow); }
+        .project-desc { color: var(--text-mute); font-size: 0.95rem; line-height: 1.7; flex-grow: 1; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+        
+        .live-tag { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; color: #fff; background: rgba(255, 255, 255, 0.05); padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1); text-transform: uppercase; letter-spacing: 1px;}
+        .live-dot { width: 6px; height: 6px; background: var(--secondary-glow); border-radius: 50%; box-shadow: 0 0 10px var(--secondary-glow); animation: blink 1.5s infinite; }
+        .arrow-btn { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #fff; transition: all 0.3s ease-out; }
+        .glass-card:hover .arrow-btn { background: #fff; color: #000; box-shadow: 0 0 20px #fff; transform: rotate(-45deg); }
+
+        /* 10. CONTACT FORM */
+        .contact-form { display: flex; flex-direction: column; gap: 20px; }
+        .form-group { position: relative; }
+        .form-input {
+            width: 100%; padding: 15px 20px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-light);
+            border-radius: 8px; color: #fff; font-family: var(--font-body); outline: none; transition: 0.3s;
+        }
+        .form-input:focus { border-color: var(--secondary-glow); box-shadow: 0 0 15px rgba(220, 38, 38, 0.2); }
+        textarea.form-input { min-height: 150px; resize: vertical; }
+        .submit-btn {
+            padding: 15px 30px; background: var(--secondary-glow); color: #fff; border: none; border-radius: 8px;
+            font-family: var(--font-head); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px;
+            transition: 0.3s; box-shadow: 0 10px 20px rgba(220, 38, 38, 0.3);
+        }
+        .submit-btn:hover { background: var(--accent-white); color: #000; box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4); }
+
+        /* 11. FOOTER */
+        footer { width: 100%; padding: 40px; text-align: center; color: var(--text-mute); border-top: 1px solid var(--border-light); background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); font-family: var(--font-mono); font-size: 0.85rem; }
+        .f-accent { color: var(--secondary-glow); font-weight: bold; }
+
+        /* -----------------------------------------------------------
+           8. ANIMASYONLAR VE YARDIMCI SINIFLAR
+        ----------------------------------------------------------- */
+        @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes textFlicker { 0% { opacity: 1; } 5% { opacity: 0.5; } 10% { opacity: 1; } 100% { opacity: 1; } }
+        @keyframes breathe { 0% { transform: scale(1); opacity: 0.2; } 100% { transform: scale(1.1); opacity: 0.4; } }
+        
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            .glass-card { transform: none !important; } 
+            #cursor-custom { display: none; } * { cursor: auto !important; }
+            nav { padding: 15px; } .ai-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. CUSTOM CURSOR -->
+    <div id="cursor-custom"><svg class="cursor-arrow" viewBox="0 0 24 24"><path d="M2 2L11 20L15 13L22 10L2 2Z"/></svg></div>
+
+    <!-- 2. CONTEXT MENU (Sağ Tık) -->
+    <div id="context-menu">
+        <div class="ctx-item" id="ctx-reload"><span class="c-red">►</span> Sistemi Yenile</div>
+        <div class="ctx-item" id="ctx-ai"><span class="c-red">►</span> AI Asistanı Aç</div>
+        <div class="ctx-item" id="ctx-source"><span class="c-red">►</span> GitHub Kaynağı</div>
+    </div>
+
+    <!-- 3. YAPAY ZEKA SOHBET ARAYÜZÜ (GEMINI AI) -->
+    <div id="ai-overlay">
+        <div class="ai-window">
+            <div class="ai-header">
+                <div class="ai-header-title">
+                    <div class="live-dot" style="width:10px;height:10px;"></div>
+                    <span>HaKING06 // AI_ASİSTAN</span>
+                </div>
+                <span class="ai-close" id="ai-close">✖</span>
+            </div>
+            <div class="ai-body" id="ai-body">
+                <div class="chat-msg chat-ai">Merhaba. Ben HaKING06'nın kişisel yapay zeka asistanıyım. Portfolyo, projeler veya teknolojiler hakkında bana her şeyi sorabilirsiniz.</div>
+            </div>
+            <div class="ai-input-area">
+                <input type="text" class="ai-input" id="ai-input" placeholder="Yapay zekaya bir mesaj gönderin..." autocomplete="off">
+                <button class="ai-send-btn" id="ai-send-btn">GÖNDER</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. LOADERS & PORTALS -->
+    <div id="loader-screen">
+        <div class="loader-glitch">SYSTEM BOOT</div>
+        <div class="loader-text" id="loader-msg">Veri modülleri yükleniyor...</div>
+        <div class="sys-progress"><div class="sys-progress-bar" id="loader-bar"></div></div>
+    </div>
+
+    <div id="portal-screen">
+        <div style="color:var(--text-mute); font-family:var(--font-mono); margin-bottom:10px; letter-spacing:4px;">GÜVENLİ YÖNLENDİRME BAŞLATILDI</div>
+        <div class="target-text" id="target-name">PROJECT NAME</div>
+        <div class="portal-bar-wrap"><div class="portal-bar-fill" id="portal-fill"></div></div>
+        <div style="color:#666; font-size:0.85rem; margin-top:20px; font-family:var(--font-mono);">Ağ bağlantısı şifreleniyor...</div>
+    </div>
+
+    <!-- 5. BACKGROUND ENGINE -->
+    <div class="ambient-glow"><div class="glow-orb go-1"></div><div class="glow-orb go-2"></div></div>
+    <canvas id="network-canvas"></canvas>
+
+    <!-- 6. NAVIGATION -->
+    <nav>
+        <a href="#" class="nav-logo-text">HaKING<span style="color:var(--secondary-glow)">06</span></a>
+        <button class="ai-btn" id="open-ai-btn"><div class="ai-dot"></div> _AI_SOHBET</button>
+    </nav>
+
+    <!-- 7. HERO SECTION -->
+    <section class="hero">
+        <a href="https://github.com/HaKING06" target="_blank" style="text-decoration: none;">
+            <div class="logo-wrapper">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#991b1b;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#450a0a;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M10 40 L30 70 L50 30 L70 70 L90 40 L85 85 H15 Z" fill="url(#logoGrad)" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                    <circle cx="50" cy="20" r="4" fill="white" filter="drop-shadow(0 0 5px white)"/>
+                </svg>
+            </div>
+        </a>
+        <h1 id="main-title">HaKING06</h1>
+        <div class="subtitle">Executive Digital Architecture</div>
+    </section>
+
+    <!-- 8. SYSTEM STATS & ABOUT -->
+    <section id="about" class="reveal">
+        <h2 class="section-title">Sistem Durumu & Profil</h2>
+        <div class="glass-panel" style="max-width: 900px; margin: 0 auto;">
+            <div class="profile-header">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23111'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23333'/%3E%3Cpath d='M20 90 Q50 50 80 90' stroke='%23333' stroke-width='10' fill='none'/%3E%3C/svg%3E" alt="Avatar" class="avatar" id="gh-avatar">
+                <div>
+                    <div class="gh-name" id="gh-name">Kullanıcı Bekleniyor...</div>
+                    <div style="font-family:var(--font-mono); color:var(--secondary-glow); font-size:0.9rem; margin-top:5px;">@HaKING06</div>
+                </div>
+            </div>
+            <div class="gh-bio" id="gh-bio">Sistem verileri taranıyor. Biyografi bilgisi yükleniyor...</div>
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-num" id="stat-repos">--</div>
+                    <div class="stat-label">Projeler</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num" id="stat-followers">--</div>
+                    <div class="stat-label">Takipçi</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num" id="stat-following">--</div>
+                    <div class="stat-label">Takip Edilen</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. PROJECTS -->
+    <section id="work" class="reveal">
+        <h2 class="section-title">Operasyon Kayıtları (Projeler)</h2>
+        <div class="project-grid" id="projects-container">
+            <!-- JS Dolduracak -->
+        </div>
+    </section>
+
+    <!-- 10. CONTACT -->
+    <section id="contact" class="reveal">
+        <h2 class="section-title">Güvenli İletişim Kanalı</h2>
+        <div class="glass-panel" style="max-width: 800px; margin: 0 auto;">
+            <!-- form action mailto olarak güncellendi -->
+            <form class="contact-form" id="contactForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group"><input type="text" id="contactName" class="form-input" placeholder="Kimlik (İsim)" required></div>
+                    <div class="form-group"><input type="email" id="contactEmail" class="form-input" placeholder="İletişim Adresi (Email)" required></div>
+                </div>
+                <div class="form-group">
+                    <textarea id="contactMessage" class="form-input" placeholder="Şifrelenecek Mesajınız..." required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Mesajı İlet</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- 11. FOOTER -->
+    <footer>
+        <span class="f-accent">HaKING06</span> Executive OS &copy; 2026 // Tüm protokoller aktif.
+    </footer>
+
+    <!-- ==========================================================================
+         JAVASCRIPT MOTORU (OOP, AI Chat, Canvas, API)
+         ========================================================================== -->
+    <script>
+    (function() {
+        "use strict";
+
+        // --- 1. INTERACTION & UI ENGINE (Cursor, Ripple, Custom Context Menu) ---
+        class UIEngine {
+            constructor() {
+                this.cursor = document.getElementById('cursor-custom');
+                this.ctxMenu = document.getElementById('context-menu');
+                this.lastRightClickTime = 0;
+                
+                this.initCursor();
+                this.initContextMenu();
+                this.initScrollReveal();
+                this.initContactForm();
+            }
+
+            initCursor() {
+                document.addEventListener('mousemove', (e) => {
+                    this.cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                    document.body.style.setProperty('--mouse-x', `${e.clientX}px`);
+                    document.body.style.setProperty('--mouse-y', `${e.clientY}px`);
+                });
+
+                document.addEventListener('mousedown', (e) => {
+                    if(e.button === 0) { // Sol tık ripple efekti
+                        const ripple = document.createElement('div');
+                        ripple.className = 'click-ripple anim-ripple';
+                        ripple.style.left = `${e.clientX}px`;
+                        ripple.style.top = `${e.clientY}px`;
+                        document.body.appendChild(ripple);
+                        setTimeout(() => ripple.remove(), 600);
+                    }
+                });
+
+                document.addEventListener('mouseover', (e) => {
+                    if (e.target.closest('a, .glass-card, button, .ai-btn, .ctx-item')) {
+                        document.body.classList.add('hovering');
+                    } else {
+                        document.body.classList.remove('hovering');
+                    }
+                });
+            }
+
+            initContextMenu() {
+                document.addEventListener('contextmenu', (e) => {
+                    const now = Date.now();
+                    // DOUBLE RIGHT CLICK CHECK: Ard arda 500ms içinde sağ tık yapılırsa iptal et, normal menüyü aç
+                    if (now - this.lastRightClickTime < 500) {
+                        this.ctxMenu.classList.remove('active');
+                        return; // Default menü açılır
+                    }
+                    
+                    e.preventDefault();
+                    this.lastRightClickTime = now;
+                    this.ctxMenu.style.left = `${e.clientX}px`;
+                    this.ctxMenu.style.top = `${e.clientY}px`;
+                    this.ctxMenu.classList.add('active');
+                });
+                
+                document.addEventListener('click', (e) => {
+                    if(!e.target.closest('#context-menu')) this.ctxMenu.classList.remove('active');
+                });
+
+                document.getElementById('ctx-reload').addEventListener('click', () => location.reload());
+                document.getElementById('ctx-ai').addEventListener('click', () => {
+                    document.getElementById('ai-overlay').classList.add('active');
+                    document.getElementById('ai-input').focus();
+                    this.ctxMenu.classList.remove('active');
+                });
+                document.getElementById('ctx-source').addEventListener('click', () => {
+                    window.open('https://github.com/HaKING06', '_blank');
+                    this.ctxMenu.classList.remove('active');
+                });
+            }
+
+            initScrollReveal() {
+                const obs = new IntersectionObserver((entries) => {
+                    entries.forEach(e => {
+                        if(e.isIntersecting) {
+                            e.target.classList.add('active');
+                            obs.unobserve(e.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+            }
+
+            initContactForm() {
+                document.getElementById('contactForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const name = document.getElementById('contactName').value;
+                    const email = document.getElementById('contactEmail').value;
+                    const message = document.getElementById('contactMessage').value;
+                    
+                    const subject = encodeURIComponent(`HaKING06 İletişim Formu: ${name}`);
+                    const body = encodeURIComponent(`Gönderen: ${name}\nEmail: ${email}\n\nMesaj:\n${message}`);
+                    
+                    // Email client'ı aç ve verileri doldur
+                    window.location.href = `mailto:halitguns06@gmail.com?subject=${subject}&body=${body}`;
+                });
+            }
+        }
+
+        // --- 2. AI ASSISTANT (Gemini API Integration) ---
+        class AIAssistant {
+            constructor() {
+                this.overlay = document.getElementById('ai-overlay');
+                this.input = document.getElementById('ai-input');
+                this.body = document.getElementById('ai-body');
+                this.sendBtn = document.getElementById('ai-send-btn');
+                
+
+                const apiKey = "AIzaSyDk5gle_DgKJ1j2DTU4mKfnQZfRMU_lWzE";
+                this.apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+                this.initEvents();
+            }
+
+            initEvents() {
+                document.getElementById('open-ai-btn').addEventListener('click', () => this.open());
+                document.getElementById('ai-close').addEventListener('click', () => this.close());
+                
+                this.sendBtn.addEventListener('click', () => this.sendMessage());
+                this.input.addEventListener('keypress', (e) => {
+                    if(e.key === 'Enter') this.sendMessage();
+                });
+            }
+
+            open() { 
+                this.overlay.classList.add('active'); 
+                this.input.focus(); 
+            }
+            close() { 
+                this.overlay.classList.remove('active'); 
+            }
+
+            addMessage(text, isUser) {
+                const msg = document.createElement('div');
+                msg.className = `chat-msg ${isUser ? 'chat-user' : 'chat-ai'}`;
+                let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                msg.innerHTML = formattedText;
+                this.body.appendChild(msg);
+                this.body.scrollTop = this.body.scrollHeight;
+            }
+
+            showTyping() {
+                const indicator = document.createElement('div');
+                indicator.className = 'typing-indicator';
+                indicator.id = 'typing-indicator';
+                indicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+                this.body.appendChild(indicator);
+                this.body.scrollTop = this.body.scrollHeight;
+            }
+
+            hideTyping() {
+                const indicator = document.getElementById('typing-indicator');
+                if(indicator) indicator.remove();
+            }
+
+            async sendMessage() {
+                const text = this.input.value.trim();
+                if(!text) return;
+
+                this.input.value = '';
+                this.addMessage(text, true);
+                this.showTyping();
+
+                try {
+                    const prompt = `Sen HaKING06'nın kişisel yapay zeka asistanısın. Portfolyosundaki ziyaretçilere kibar, profesyonel ve kısa cevaplar veren bir asistansın. Ziyaretçi: ${text}`;
+                    
+                    const response = await this.fetchWithRetry(prompt);
+                    this.hideTyping();
+                    
+                    if (response && response.candidates && response.candidates.length > 0) {
+                        const replyText = response.candidates[0].content.parts[0].text;
+                        this.addMessage(replyText, false);
+                    } else {
+                        this.addMessage("Üzgünüm, şu anda yanıt oluşturamıyorum.", false);
+                    }
+
+                } catch (error) {
+                    console.error("AI Error:", error);
+                    this.hideTyping();
+                    this.addMessage("Sistem aşırı yüklendi veya API anahtarı eksik. Lütfen daha sonra tekrar deneyin.", false);
+                }
+            }
+
+            async fetchWithRetry(text, retries = 5) {
+                const delays = [1000, 2000, 4000, 8000, 16000];
+                const payload = {
+                    contents: [{ parts: [{ text: text }] }]
+                };
+
+                for (let i = 0; i < retries; i++) {
+                    try {
+                        const res = await fetch(this.apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        
+                        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                        return await res.json();
+                    } catch (err) {
+                        if (i === retries - 1) throw err;
+                        await new Promise(r => setTimeout(r, delays[i]));
+                    }
+                }
+            }
+        }
+
+        // --- 3. CANVAS BACKGROUND (NEURAL NETWORK) ---
+        class NetworkCanvas {
+            constructor() {
+                this.canvas = document.getElementById('network-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.nodes = [];
+                this.mouse = { x: null, y: null };
+                this.init();
+            }
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                window.addEventListener('mousemove', e => { this.mouse.x = e.clientX; this.mouse.y = e.clientY; });
+                
+                const count = Math.floor((this.w * this.h) / 12000);
+                for(let i=0; i<count; i++) {
+                    this.nodes.push({
+                        x: Math.random() * this.w, y: Math.random() * this.h,
+                        vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+                        radius: Math.random() * 2 + 1
+                    });
+                }
+                this.animate();
+            }
+            resize() {
+                this.w = this.canvas.width = window.innerWidth;
+                this.h = this.canvas.height = window.innerHeight;
+            }
+            animate() {
+                this.ctx.clearRect(0,0,this.w,this.h);
+                this.ctx.fillStyle = "#dc2626"; // Secondary glow color
+                
+                for(let i=0; i<this.nodes.length; i++) {
+                    let n = this.nodes[i];
+                    n.x += n.vx; n.y += n.vy;
+                    if(n.x < 0 || n.x > this.w) n.vx *= -1;
+                    if(n.y < 0 || n.y > this.h) n.vy *= -1;
+
+                    // Mouse Interaction
+                    if(this.mouse.x != null) {
+                        let dx = this.mouse.x - n.x; let dy = this.mouse.y - n.y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        if(dist < 150) {
+                            n.x -= dx * 0.01; n.y -= dy * 0.01;
+                        }
+                    }
+
+                    this.ctx.beginPath(); this.ctx.arc(n.x, n.y, n.radius, 0, Math.PI*2); this.ctx.fill();
+
+                    // Connections
+                    for(let j=i+1; j<this.nodes.length; j++) {
+                        let n2 = this.nodes[j];
+                        let dx = n.x - n2.x; let dy = n.y - n2.y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        if(dist < 120) {
+                            this.ctx.beginPath();
+                            this.ctx.strokeStyle = `rgba(220, 38, 38, ${0.2 - dist/600})`;
+                            this.ctx.lineWidth = 0.5;
+                            this.ctx.moveTo(n.x, n.y); this.ctx.lineTo(n2.x, n2.y);
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // --- 4. CORE APP & GITHUB API ---
+        class AppCore {
+            constructor() {
+                this.user = 'HaKING06';
+                this.loader = document.getElementById('loader-screen');
+                this.loadBar = document.getElementById('loader-bar');
+                this.grid = document.getElementById('projects-container');
+            }
+
+            async boot() {
+                // Title Decode Effect
+                this.decodeText(document.getElementById('main-title'), 'HaKING06');
+                
+                try {
+                    this.loadBar.style.width = '30%';
+                    const userRes = await fetch(`https://api.github.com/users/${this.user}`);
+                    const userData = await userRes.json();
+                    this.populateUserData(userData);
+
+                    this.loadBar.style.width = '60%';
+
+                    const repoRes = await fetch(`https://api.github.com/users/${this.user}/repos?sort=pushed&per_page=100`);
+                    const repos = await repoRes.json();
+                    
+                    this.loadBar.style.width = '100%';
+                    setTimeout(() => {
+                        this.loader.style.opacity = '0';
+                        setTimeout(() => { this.loader.style.display = 'none'; }, 800);
+                        this.renderProjects(repos);
+                    }, 500);
+
+                } catch(err) {
+                    console.error("BOOT SEQUENCE FAILED:", err);
+                    document.getElementById('loader-msg').innerHTML = "<span style='color:#ef4444;'>SİSTEM BAĞLANTI HATASI</span>";
+                }
+            }
+
+            decodeText(element, text) {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*';
+                let iter = 0;
+                const interval = setInterval(() => {
+                    element.innerText = text.split('').map((l, i) => {
+                        if (i < iter) return text[i];
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    }).join('');
+                    if (iter >= text.length) {
+                        clearInterval(interval);
+                        element.classList.remove('decoding');
+                    }
+                    iter += 1 / 3;
+                }, 30);
+            }
+
+            populateUserData(data) {
+                if(data.avatar_url) document.getElementById('gh-avatar').src = data.avatar_url;
+                if(data.name) document.getElementById('gh-name').innerText = data.name;
+                if(data.bio) document.getElementById('gh-bio').innerText = data.bio;
+                if(data.public_repos !== undefined) document.getElementById('stat-repos').innerText = data.public_repos;
+                if(data.followers !== undefined) document.getElementById('stat-followers').innerText = data.followers;
+                if(data.following !== undefined) document.getElementById('stat-following').innerText = data.following;
+            }
+
+            renderProjects(repos) {
+                this.grid.innerHTML = '';
+                const sites = Array.isArray(repos) ? repos.filter(r => r.has_pages || (r.homepage && r.homepage.length > 5)) : [];
+
+                let displayItems = sites;
+                if(sites.length === 0) {
+                    displayItems = [
+                        { name: "Executive Core", description: "Kurumsal sistem altyapısı.", homepage: "#" },
+                        { name: "Red Protocol", description: "İleri düzey şifreleme modülü.", homepage: "#" },
+                        { name: "Nexus UI", description: "Premium kullanıcı arayüzü motoru.", homepage: "#" }
+                    ];
+                }
+
+                displayItems.forEach((repo, i) => {
+                    const targetUrl = repo.homepage || `https://${this.user}.github.io/${repo.name}`;
+                    const desc = repo.description || "Gelişmiş dijital mimari protokolü.";
+
+                    const card = document.createElement('div');
+                    card.className = "glass-card reveal"; 
+                    card.style.animationDelay = `${i * 0.1}s`;
+
+                    card.innerHTML = `
+                        <div class="card-inner">
+                            <div>
+                                <div class="project-name">${repo.name}</div>
+                                <p class="project-desc">${desc}</p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="live-tag"><div class="live-dot"></div> ACTIVE</div>
+                                <div class="arrow-btn">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // 3D Tilt Logic
+                    card.addEventListener('mousemove', (e) => {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left; 
+                        const y = e.clientY - rect.top;
+                        const cX = rect.width / 2; const cY = rect.height / 2;
+                        const rX = (cY - y) / 20; const rY = (x - cX) / 20;
+                        card.style.transform = `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale3d(1.02, 1.02, 1.02)`;
+                    });
+
+                    card.addEventListener('mouseleave', () => {
+                        card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
+                    });
+
+                    // Click Trigger Portal
+                    card.addEventListener('click', () => this.triggerPortal(targetUrl, repo.name));
+
+                    this.grid.appendChild(card);
+                });
+                
+                // Render sonrası görünürlük
+                setTimeout(() => {
+                    document.querySelectorAll('.glass-card').forEach(el => el.classList.add('active'));
+                }, 100);
+            }
+
+            triggerPortal(url, name) {
+                const overlay = document.getElementById('portal-screen');
+                const target = document.getElementById('target-name');
+                const bar = document.getElementById('portal-fill');
+
+                target.innerText = name.toUpperCase();
+                overlay.classList.add('active');
+                
+                setTimeout(() => { bar.style.width = "100%"; }, 100);
+                
+                setTimeout(() => {
+                    // Animasyon tamamen bittikten sonra yeni sekmede açmak için a tagi taklidi yapıyoruz
+                    // (Bu, window.location atamasından sonra animasyonu görebilmeni sağlar)
+                    let a = document.createElement('a');
+                    a.href = url;
+                    a.target = '_blank';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    setTimeout(() => {
+                        overlay.classList.remove('active');
+                        bar.style.width = "0%";
+                    }, 500);
+                }, 1300);
+            }
+        }
+
+        // --- BAŞLATMA ---
+        document.addEventListener('DOMContentLoaded', () => {
+            new UIEngine();
+            new AIAssistant();
+            new NetworkCanvas();
+            const MainApp = new AppCore();
+            MainApp.boot();
+        });
+
+    })();
+    </script>
+</body>
+</html>
