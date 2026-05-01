@@ -1,0 +1,25 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Eğer ana branch'inin adı master ise burayı master yap
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Kodu Çek (Checkout)
+        uses: actions/checkout@v3
+
+      - name: API Anahtarını Koda Ekle
+        # index.html içindeki o metni, GitHub Secrets'taki key ile değiştiriyoruz
+        run: |
+          sed -i 's/BENIM_GIZLI_API_ANAHTARIM/${{ secrets.GEMINI_API_KEY }}/g' index.html
+
+      - name: GitHub Pages'e Yükle
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./  # Sadece index.html olduğu için ana dizini yayınlıyoruz
