@@ -314,7 +314,7 @@
         <div class="ctx-item" id="ctx-source"><span class="c-red">►</span> GitHub Kaynağı</div>
     </div>
 
-    <!-- 3. YAPAY ZEKA SOHBET ARAYÜZÜ (GEMINI AI) -->
+    <!-- 3. YAPAY ZEKA SOHBET ARAYÜZÜ (KİLİTLİ/BAKIM MODU) -->
     <div id="ai-overlay">
         <div class="ai-window">
             <div class="ai-header">
@@ -545,7 +545,7 @@
             }
         }
 
-        // --- 2. AI ASSISTANT (Gemini API Integration) ---
+        // --- 2. AI ASSISTANT (MAINTENANCE MODE) ---
         class AIAssistant {
             constructor() {
                 this.overlay = document.getElementById('ai-overlay');
@@ -553,9 +553,6 @@
                 this.body = document.getElementById('ai-body');
                 this.sendBtn = document.getElementById('ai-send-btn');
                 
-
-                const apiKey = "AIzaSyDk5gle_DgKJ1j2DTU4mKfnQZfRMU_lWzE";
-                this.apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
                 this.initEvents();
             }
 
@@ -608,47 +605,11 @@
                 this.addMessage(text, true);
                 this.showTyping();
 
-                try {
-                    const prompt = `Sen HaKING06'nın kişisel yapay zeka asistanısın. Portfolyosundaki ziyaretçilere kibar, profesyonel ve kısa cevaplar veren bir asistansın. Ziyaretçi: ${text}`;
-                    
-                    const response = await this.fetchWithRetry(prompt);
+                // Simüle edilmiş AI Düşünme Süresi ve Sabit Bakım Mesajı
+                setTimeout(() => {
                     this.hideTyping();
-                    
-                    if (response && response.candidates && response.candidates.length > 0) {
-                        const replyText = response.candidates[0].content.parts[0].text;
-                        this.addMessage(replyText, false);
-                    } else {
-                        this.addMessage("Üzgünüm, şu anda yanıt oluşturamıyorum.", false);
-                    }
-
-                } catch (error) {
-                    console.error("AI Error:", error);
-                    this.hideTyping();
-                    this.addMessage("Sistem aşırı yüklendi veya API anahtarı eksik. Lütfen daha sonra tekrar deneyin.", false);
-                }
-            }
-
-            async fetchWithRetry(text, retries = 5) {
-                const delays = [1000, 2000, 4000, 8000, 16000];
-                const payload = {
-                    contents: [{ parts: [{ text: text }] }]
-                };
-
-                for (let i = 0; i < retries; i++) {
-                    try {
-                        const res = await fetch(this.apiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-                        
-                        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                        return await res.json();
-                    } catch (err) {
-                        if (i === retries - 1) throw err;
-                        await new Promise(r => setTimeout(r, delays[i]));
-                    }
-                }
+                    this.addMessage("Sistem şifreleme protokolleri güncelleniyor. Yapay Zeka modülü şu an bakım modundadır.", false);
+                }, 1500);
             }
         }
 
@@ -856,8 +817,7 @@
                 setTimeout(() => { bar.style.width = "100%"; }, 100);
                 
                 setTimeout(() => {
-                    // Animasyon tamamen bittikten sonra yeni sekmede açmak için a tagi taklidi yapıyoruz
-                    // (Bu, window.location atamasından sonra animasyonu görebilmeni sağlar)
+                    // YENİ SEKMEYE GÜVENLİ YÖNLENDİRME (Pop-up bloker atlatmak için)
                     let a = document.createElement('a');
                     a.href = url;
                     a.target = '_blank';
